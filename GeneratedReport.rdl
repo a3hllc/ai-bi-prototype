@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSources>
+    <DataSource Name="AdventureWorksDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=localhost;Initial Catalog=AdventureWorks2019</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>12345678-1234-1234-1234-1234567890ab</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="AutoDataset">
+      <Query>
+        <DataSourceName>AdventureWorksDataSource</DataSourceName>
+        <CommandText>
+                SELECT a.CountryRegionCode, COUNT(*) AS TotalOrders
+                FROM Sales.SalesOrderHeader soh
+                JOIN Person.Address a ON soh.ShipToAddressID = a.AddressID
+                GROUP BY a.CountryRegionCode
+            </CommandText>
+      </Query>
+      <!-- Fields will be injected dynamically in Python -->
+    </DataSet>
+  </DataSets>
+  <Body>
+    <ReportItems>
+      <Tablix Name="Tablix1">
+        <TablixBody>
+          <TablixColumns>
+            
+          </TablixColumns>
+          <TablixRows>
+            
+          </TablixRows>
+        </TablixBody>
+        <DataSetName>AutoDataset</DataSetName>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <Style />
+      </Tablix>
+    </ReportItems>
+    <Height>2in</Height>
+    <Style />
+  </Body>
+  <Width>6.5in</Width>
+  <Page>
+    <PageHeight>11in</PageHeight>
+    <PageWidth>8.5in</PageWidth>
+    <LeftMargin>1in</LeftMargin>
+    <RightMargin>1in</RightMargin>
+    <TopMargin>1in</TopMargin>
+    <BottomMargin>1in</BottomMargin>
+    <Style />
+  </Page>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID></rd:ReportID>
+</Report>

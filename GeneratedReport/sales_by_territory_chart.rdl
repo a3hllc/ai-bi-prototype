@@ -1,0 +1,115 @@
+<!-- Template: Dynamic Bar Chart Layout with Required Attributes and Axis Labels -->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+
+  <!-- 🔗 Connection to AdventureWorks2019 -->
+  <DataSources>
+    <DataSource Name="LocalDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=localhost;Initial Catalog=AdventureWorks2019</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>df7c0ab3-3119-407f-a856-85f75393535c</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+
+  <!-- 📦 Dynamic Dataset based on NLP-driven SQL -->
+  <DataSets>
+    <DataSet Name="SalesData">
+      <Fields>
+        <Field Name="Region">
+          <DataField>Region</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+
+        <Field Name="TotalSales">
+          <DataField>TotalSales</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field></Fields>
+      <Query>
+        <DataSourceName>LocalDataSource</DataSourceName>
+        <CommandText>SELECT TerritoryID AS Region,
+       SUM(SubTotal) AS TotalSales
+FROM Sales.SalesOrderHeader
+GROUP BY TerritoryID</CommandText>
+      </Query>
+    </DataSet>
+  </DataSets>
+
+  <!-- 📈 Bar Chart Body -->
+  <Body>
+    <ReportItems>
+      <Chart Name="DynamicBarChart">
+        <ChartCategoryHierarchy>
+          <ChartMembers>
+            <ChartMember>
+              <Group>
+                <GroupExpressions>
+                  <!-- 📊 Grouping on first column (X-axis) -->
+                  <GroupExpression>=Fields!Region.Value</GroupExpression>
+                </GroupExpressions>
+              </Group>
+              <Label>Region</Label>
+            </ChartMember>
+          </ChartMembers>
+        </ChartCategoryHierarchy>
+
+        <ChartSeriesHierarchy>
+          <ChartMembers><ChartMember /></ChartMembers>
+        </ChartSeriesHierarchy>
+
+        <ChartData>
+          <ChartSeriesCollection>
+            <ChartSeries Name="DynamicSeries">
+              <DataPoints>
+                <DataPoint>
+                  <DataValues>
+                    <!-- 📈 Bar height from second column (Y-axis) -->
+                    <DataValue>
+                      <Value>
+                        
+                          =FormatCurrency(Fields!TotalSales.Value)
+                        
+                      </Value>
+                    </DataValue>
+                  </DataValues>
+                  <DataLabel>
+                    <Style><FontSize>10pt</FontSize></Style>
+                  </DataLabel>
+                </DataPoint>
+              </DataPoints>
+              <Style><Color>RoyalBlue</Color></Style>
+            </ChartSeries>
+          </ChartSeriesCollection>
+        </ChartData>
+
+        <!-- 🧭 Required Axis/Area Definitions -->
+        <ChartAreas>
+          <ChartArea Name="DefaultChartArea">
+            <AxisX><Title>Region</Title></AxisX>
+            <AxisY><Title>TotalSales</Title></AxisY>
+          </ChartArea>
+        </ChartAreas>
+
+        <ChartLegends>
+          <ChartLegend Name="MainLegend" />
+        </ChartLegends>
+
+        <!-- 📐 Layout -->
+        <Top>0.5in</Top>
+        <Left>0.5in</Left>
+        <Height>4in</Height>
+        <Width>6in</Width>
+      </Chart>
+    </ReportItems>
+
+    <Height>5in</Height>
+  </Body>
+
+  <Width>6.5in</Width>
+  <Page>
+    <PageHeight>11in</PageHeight>
+    <PageWidth>8.5in</PageWidth>
+  </Page>
+</Report>

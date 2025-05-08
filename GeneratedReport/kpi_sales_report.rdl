@@ -1,0 +1,242 @@
+<!-- Template: Structured KPI Table -->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+
+  <DataSources>
+    <DataSource Name="LocalDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=localhost;Initial Catalog=AdventureWorks2019</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>a4eaefc0-0e10-48af-8a78-679d3e58baab</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+
+  <DataSets>
+    <DataSet Name="SalesByRegion">
+      <Fields>
+        <Field Name="Region">
+          <DataField>Region</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+
+        <Field Name="TotalSales">
+          <DataField>TotalSales</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+
+        <Field Name="OrderCount">
+          <DataField>OrderCount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field></Fields>
+      <Query>
+        <DataSourceName>LocalDataSource</DataSourceName>
+        <CommandText>SELECT TerritoryID AS Region,
+       SUM(SubTotal) AS TotalSales,
+       COUNT(SalesOrderID) AS OrderCount
+FROM Sales.SalesOrderHeader
+GROUP BY TerritoryID</CommandText>
+      </Query>
+    </DataSet>
+  </DataSets>
+
+  <Body>
+    <ReportItems>
+      <Tablix Name="KPIGrid">
+        <TablixBody>
+          <TablixColumns>
+            
+            <TablixColumn><Width>2in</Width></TablixColumn>
+            
+            <TablixColumn><Width>2in</Width></TablixColumn>
+            
+            <TablixColumn><Width>2in</Width></TablixColumn>
+            
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.3in</Height>
+              <TablixCells>
+                
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Header_Region">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Region</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                        <BackgroundColor>LightGray</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Header_TotalSales">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>TotalSales</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                        <BackgroundColor>LightGray</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Header_OrderCount">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>OrderCount</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                        <BackgroundColor>LightGray</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                
+              </TablixCells>
+            </TablixRow>
+
+            <!-- Data row -->
+            <TablixRow>
+              <Height>0.3in</Height>
+              <TablixCells>
+                
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Cell_Region">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Region.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Cell_TotalSales">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!TotalSales.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Cell_OrderCount">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!OrderCount.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            
+            <TablixMember />
+            
+            <TablixMember />
+            
+            <TablixMember />
+            
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixRowHierarchy>
+      </Tablix>
+    </ReportItems>
+    <Height>3in</Height>
+  </Body>
+
+  <Width>6.5in</Width>
+  <Page>
+    <PageHeight>11in</PageHeight>
+    <PageWidth>8.5in</PageWidth>
+  </Page>
+</Report>

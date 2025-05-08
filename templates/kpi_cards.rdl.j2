@@ -1,0 +1,145 @@
+<!-- Template: Dynamic Structured KPI Table with formatting and full comments -->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+
+  <!-- 🔗 Data source connection -->
+  <DataSources>
+    <DataSource Name="LocalDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=localhost;Initial Catalog=AdventureWorks2019</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>{{ report_id }}</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+
+  <!-- 📦 Define dataset and SQL query -->
+  <DataSets>
+    <DataSet Name="{{ dataset_name }}">
+      <Fields>{{ dataset_fields | safe }}</Fields>
+      <Query>
+        <DataSourceName>LocalDataSource</DataSourceName>
+        <CommandText>{{ sql_query }}</CommandText>
+      </Query>
+    </DataSet>
+  </DataSets>
+
+  <!-- 📄 Report body and layout -->
+  <Body>
+    <ReportItems>
+      <Tablix Name="DynamicKPIGrid">
+        <TablixBody>
+
+          <!-- 📏 Define column widths dynamically -->
+          <TablixColumns>
+            {% for col in columns %}
+            <TablixColumn><Width>2in</Width></TablixColumn>
+            {% endfor %}
+          </TablixColumns>
+
+          <TablixRows>
+            <!-- 🔤 Header Row -->
+            <TablixRow>
+              <Height>0.3in</Height>
+              <TablixCells>
+                {% for col in columns %}
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Header_{{ col }}">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>{{ col }}</Value> <!-- Header label -->
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                        <BackgroundColor>LightGray</BackgroundColor>
+                        <Border><Style>Solid</Style></Border>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                {% endfor %}
+              </TablixCells>
+            </TablixRow>
+
+            <!-- 📊 Data Row -->
+            <TablixRow>
+              <Height>0.3in</Height>
+              <TablixCells>
+                {% for col in columns %}
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Cell_{{ col }}">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <!-- 💰 Auto-format totals and sales as currency -->
+                              <Value>
+                                {% if 'total' in col.lower() or 'amount' in col.lower() or 'sales' in col.lower() %}
+                                  =FormatCurrency(Fields!{{ col }}.Value)
+                                {% else %}
+                                  =Fields!{{ col }}.Value
+                                {% endif %}
+                              </Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <Style>
+                        <FontSize>11pt</FontSize>
+                        <Border><Style>Solid</Style></Border>
+                        {% if 'total' in col.lower() %}
+                          <Color>DarkGreen</Color>
+                        {% endif %}
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                {% endfor %}
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+
+        <!-- 🧱 Column & Row Hierarchy (SSRS requirement) -->
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            {% for _ in columns %}
+            <TablixMember />
+            {% endfor %}
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixRowHierarchy>
+      </Tablix>
+    </ReportItems>
+
+    <Height>3in</Height>
+  </Body>
+
+  <!-- 🧾 Page Setup -->
+  <Width>6.5in</Width>
+  <Page>
+    <PageHeight>11in</PageHeight>
+    <PageWidth>8.5in</PageWidth>
+  </Page>
+</Report>

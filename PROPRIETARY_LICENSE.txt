@@ -1,0 +1,20 @@
+# PROPRIETARY LICENSE: SSRS + AI Reporting Prototype
+
+This software and associated documentation is proprietary to A3H LLC.
+
+Copyright (c) 2024 A3H LLC. All rights reserved.
+
+You are permitted to:
+- View and test the prototype for demonstration purposes only
+- Discuss and evaluate the system privately with the creator
+
+You are NOT permitted to:
+- Redistribute or publish any part of this code
+- Use it for commercial deployment or resale
+- Modify or reverse-engineer the components without written consent
+
+Violations may result in legal action.
+
+To request commercial use, demo access, or licensing, contact:
+📩 [Sandeep Singh] via LinkedIn or email [singh.sandeep893@gmail.com]
+

@@ -1,0 +1,68 @@
+import streamlit as st
+import openai
+from dotenv import load_dotenv
+import os
+import json
+
+# Import helper functions
+from utils.helpers import format_sql, log_query
+
+# Load API Key from .env
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# App Title
+st.title("AdventureWorks SQL Chatbot 🤖")
+st.write("Ask a natural language question and get T-SQL for the AdventureWorks2019 database.")
+
+# User input
+user_query = st.text_input("Enter your SQL question:")
+convert_pg = st.checkbox("Convert result to PostgreSQL")
+
+# Generate response
+if user_query:
+    prompt = f"""
+You are a helpful assistant that generates Microsoft SQL Server (T-SQL) queries 
+for the AdventureWorks2019 database based on natural language input.
+
+User query: "{user_query}"
+
+Respond with a properly formatted SQL query.
+Include appropriate JOINs, WHERE clauses, and table names based on the AdventureWorks schema.
+"""
+    try:
+        # Generate T-SQL
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an expert SQL assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2,
+            max_tokens=300
+        )
+        sql_code = format_sql(response["choices"][0]["message"]["content"])
+        st.subheader("🧾 Generated SQL Server Query:")
+        st.code(sql_code, language='sql')
+
+        # Log the T-SQL query
+        log_query(user_query, sql_code)
+
+        # If PostgreSQL checkbox is selected
+        if convert_pg:
+            pg_prompt = f"""
+Convert the following T-SQL query to PostgreSQL syntax. Do not explain, just give the translated SQL.
+
+T-SQL:
+{sql_code}
+"""
+            pg_response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are a SQL expert."},
+                    {"role": "user", "content": pg_prompt}
+                ],
+                temperature=0.2,
+                max_tokens=300
+            )
+            pg_sql = format_sql(pg_response["choices"][0]["message]()_

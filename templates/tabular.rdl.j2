@@ -1,0 +1,43 @@
+<!-- Template: Tabular Layout -->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+
+  <DataSources>
+    <DataSource Name="LocalDataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>{{ report_id }}</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+
+  <DataSets>
+    <DataSet Name="{{ dataset_name }}">
+      <Fields>{{ dataset_fields | safe }}</Fields>
+      <Query>
+        <DataSourceName>LocalDataSource</DataSourceName>
+        <CommandText>{{ sql_query }}</CommandText>
+      </Query>
+    </DataSet>
+  </DataSets>
+
+  <Body>
+    <ReportItems>
+      <Tablix Name="Tablix1">
+        <TablixBody>
+          <TablixColumns>{{ tablix_columns | safe }}</TablixColumns>
+          <TablixRows>{{ tablix_rows | safe }}</TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>{{ tablix_column_members | safe }}</TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>{{ tablix_row_members | safe }}</TablixMembers>
+        </TablixRowHierarchy>
+      </Tablix>
+    </ReportItems>
+    <Height>4in</Height>
+  </Body>
+</Report>

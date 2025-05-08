@@ -1,0 +1,27 @@
+<!-- Template: Default Table Layout (fallback) -->
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition"
+        xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSets>
+    <DataSet Name="{{ dataset_name }}">
+      <Fields>{{ dataset_fields | safe }}</Fields>
+      <Query><CommandText>{{ sql_query }}</CommandText></Query>
+    </DataSet>
+  </DataSets>
+  <Body>
+    <ReportItems>
+      <Tablix Name="FallbackTable">
+        <TablixBody>
+          <TablixColumns>{{ tablix_columns | safe }}</TablixColumns>
+          <TablixRows>{{ tablix_rows | safe }}</TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>{{ tablix_column_members | safe }}</TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>{{ tablix_row_members | safe }}</TablixMembers>
+        </TablixRowHierarchy>
+      </Tablix>
+    </ReportItems>
+    <Height>3in</Height>
+  </Body>
+</Report>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BI + AI Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #f0f2f5; color: #333; }
+    header {
+      background: linear-gradient(to right, #0056b3, #003b80);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    label, h2, h3 { font-weight: 600; }
+    textarea, input {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px;
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      margin: 10px 8px 10px 0;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover { background-color: #0056b3; }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
+    }
+    #result, #sql-panel {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      overflow-x: auto;
+    }
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 14px;
+      background: #e9ecef;
+      color: #666;
+      margin-top: 40px;
+    }
+    #error { color: red; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <header>BI + AI Integration for AdventureWorks</header>
+
+  <div class="container">
+    <h2>Ask a Business Question</h2>
+    <label for="question">Question:</label>
+    <textarea id="question" placeholder="E.g., generate report for top selling products..."></textarea>
+
+    <label for="creator_id">Creator ID:</label>
+    <input type="text" id="creator_id" value="admin" />
+
+    <p style="font-size: 14px; color: #444;">Click <strong>Submit</strong> to preview results. Click <strong>Deploy to SSRS</strong> to publish.</p>
+
+    <div>
+      <button onclick="submitQuery()">Submit</button>
+      <button onclick="deployRDL()">Deploy to SSRS</button>
+      <button onclick="copySQL()">Copy SQL</button>
+      <button onclick="toggleSQL()">Show/Hide SQL</button>
+    </div>
+
+    <p id="error"></p>
+
+    <div class="row">
+      <div class="left">
+        <h3>Results</h3>
+        <div id="result"></div>
+      </div>
+      <div class="right">
+        <h3>SQL Query</h3>
+        <div id="sql-panel" style="display:none;">
+          <div id="sql"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 30px;">
+      <h3>Recently Deployed Reports</h3>
+      <ul id="report-log" style="padding-left: 20px; list-style-type: disc;"></ul>
+    </div>
+  </div>
+
+  <footer>
+    Prototype for BI Automation · Flask + SSRS Integration · &copy; 2024 A3H LLC. All rights reserved.
+  </footer>
+
+  <script>
+    function getFormData() {
+      return {
+        question: document.getElementById('question').value,
+        creator_id: document.getElementById('creator_id').value
+      };
+    }
+
+    function submitQuery() {
+      const { question, creator_id } = getFormData();
+      document.getElementById('error').textContent = '';
+      document.getElementById('result').innerHTML = 'Loading...';
+      document.getElementById('sql').textContent = '';
+      document.getElementById('sql-panel').style.display = 'none';
+
+      fetch('/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, creator_id })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('error').textContent = data.error;
+          document.getElementById('result').innerHTML = '';
+        } else {
+          document.getElementById('result').innerHTML = data.html;
+          document.getElementById('sql').textContent = data.sql || 'No SQL returned.';
+          document.getElementById('sql-panel').style.display = 'block';
+        }
+      })
+      .catch(err => {
+        document.getElementById('error').textContent = 'Error: ' + err.message;
+        document.getElementById('result').innerHTML = '';
+        document.getElementById('sql').textContent = '';
+      });
+    }
+
+    function deployRDL() {
+      const { question, creator_id } = getFormData();
+      document.getElementById('error').textContent = '';
+      document.getElementById('result').innerHTML = 'Deploying...';
+
+      fetch('/api/deploy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, creator_id })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById('error').textContent = data.error;
+          document.getElementById('result').innerHTML = '';
+        } else {
+          document.getElementById('result').innerHTML = data.html;
+          document.getElementById('sql').textContent = data.sql || 'No SQL returned.';
+
+          const log = document.getElementById('report-log');
+          const time = new Date().toLocaleTimeString();
+          const li = document.createElement('li');
+          li.innerHTML = `${time} — <strong>${question}</strong>`;
+          log.prepend(li);
+        }
+      })
+      .catch(err => {
+        document.getElementById('error').textContent = 'Deployment failed: ' + err.message;
+        document.getElementById('result').innerHTML = '';
+      });
+    }
+
+    function toggleSQL() {
+      const panel = document.getElementById('sql-panel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function copySQL() {
+      const sqlText = document.getElementById('sql').innerText.trim();
+      if (!sqlText) return alert('No SQL to copy');
+      navigator.clipboard.writeText(sqlText).then(() => alert('SQL copied!'));
+    }
+  </script>
+</body>
+</html>
